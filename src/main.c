@@ -1,7 +1,6 @@
 #include <stm32f302xc.h>
 #include <stdbool.h>
 #include "stm32f3hal/rcc.h"
-#include "stm32f3hal/usart.h"
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 
@@ -14,25 +13,23 @@ int main(void){
 
     // driver setup
     led_setup();
-    uart1_setup();
+    //uart1_setup();
+    uart1_interrupt_setup();
 
     asm("cpsie i");     /* end interrupt-sensitive init */
     
-    // WRITE TO LEDS
-    while (1) {
-        led_toggle(RED_LED_PIN);
-        for(volatile int i = 0; i < 1000000; i++);
-    }
-    led_on(RED_LED_PIN);
-    led_off(RED_LED_PIN);
+    char array[16];
+    int count = 0;
 
-    // UART LOOPBACK
-    uint8_t c = 0;
-    for(;;) {
-        while(!usart_rdr_not_empty(USART1));
-        c = USART1->RDR & 0xFF;
-        while(!usart_tdr_empty(USART1));
-        USART1->TDR = c;
+    while (1) {
+        led_toggle(GREEN_LED_PIN);
+        count = usart1_interrupt_receive(array);
+
+        if (count != 0) {
+            usart1_interrupt_transmit(array, count);
+        }
+        
+        for(volatile int i = 0; i < 500000; i++);
     }
 
     // no touchy
@@ -42,10 +39,30 @@ int main(void){
 }
 
 void HardFault_Handler(void) {
+    led_off(RED_LED_PIN);
+
     for(;;) {
-        GPIOB->ODR = 2;
-        for(volatile int i = 0; i < 1000000; i++);
-        GPIOB->ODR = 0;
+        // ...
+        for (int repeat = 0; repeat < 3; repeat++) {
+            led_on(RED_LED_PIN);
+            for(volatile int i = 0; i < 500000; i++);
+            led_off(RED_LED_PIN);
+            for(volatile int i = 0; i < 500000; i++);
+        }
+        // ---
+        for (int repeat = 0; repeat < 3; repeat++) {
+            led_on(RED_LED_PIN);
+            for(volatile int i = 0; i < 1000000; i++);
+            led_off(RED_LED_PIN);
+            for(volatile int i = 0; i < 1000000; i++);
+        }
+        // ...
+        for (int repeat = 0; repeat < 3; repeat++) {
+            led_on(RED_LED_PIN);
+            for(volatile int i = 0; i < 500000; i++);
+            led_off(RED_LED_PIN);
+            for(volatile int i = 0; i < 500000; i++);
+        }
         for(volatile int i = 0; i < 1000000; i++);
     }
 }
