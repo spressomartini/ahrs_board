@@ -2,30 +2,29 @@
 #include <stdbool.h>
 #include "stm32f3hal/rcc.h"
 #include "stm32f3hal/usart.h"
-#include "stm32f3hal/gpio.h"
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 
 int main(void){
-    // begin interrupt-sensitive init
-    asm("cpsid i");
+    asm("cpsid i");     /* begin interrupt-sensitive init */ 
+
     // set up the system and peripheral clocks
     rcc_clock_hse_pll_setup(&rcc_default_config);
     SystemCoreClockUpdate();
 
-    // set up the LEDs
+    // driver setup
     led_setup();
-
-    // set up UART1
     uart1_setup();
-    asm("cpsie i");
 
+    asm("cpsie i");     /* end interrupt-sensitive init */
+    
     // WRITE TO LEDS
-    gpio_write_pin(GPIOB, GREEN_LED_PIN, GPIO_PIN_SET);
-    gpio_write_pin(GPIOB, RED_LED_PIN, GPIO_PIN_SET);
-    for(volatile int i = 0; i < 100000; i++);
-    gpio_write_pin(GPIOB, 0, GPIO_PIN_RESET);
-    gpio_write_pin(GPIOB, 1, GPIO_PIN_RESET);
+    while (1) {
+        led_toggle(RED_LED_PIN);
+        for(volatile int i = 0; i < 1000000; i++);
+    }
+    led_on(RED_LED_PIN);
+    led_off(RED_LED_PIN);
 
     // UART LOOPBACK
     uint8_t c = 0;

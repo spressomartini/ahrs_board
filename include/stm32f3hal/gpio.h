@@ -53,4 +53,5 @@ void gpio_pin_set_ospeed(GPIO_TypeDef *base, uint32_t pin, uint32_t ospeed);
 void gpio_pin_set_alt(GPIO_TypeDef *base, uint32_t pin, uint32_t alt);
 void gpio_pin_setup(GPIO_PIN_Config *pin_conf);
 void gpio_write_pin(GPIO_TypeDef *base, uint32_t pin, GPIO_PIN_State state);
+GPIO_PIN_State gpio_read_pin_output(GPIO_TypeDef *base, uint32_t pin);
 void gpio_clock_enable(GPIO_TypeDef *base);

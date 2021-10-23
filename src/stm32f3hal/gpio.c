@@ -74,6 +74,10 @@ void gpio_write_pin(GPIO_TypeDef *base, uint32_t pin, GPIO_PIN_State state) {
     }
 }
 
+GPIO_PIN_State gpio_read_pin_output(GPIO_TypeDef *base, uint32_t pin) {
+    return base->ODR & (1 << pin);
+}
+
 void gpio_clock_enable(GPIO_TypeDef *base) {
     switch((uint32_t)base) {
         case (uint32_t)GPIOA:
