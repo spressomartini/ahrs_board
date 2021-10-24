@@ -150,6 +150,23 @@ void usart_tx_interrupt_disable(USART_TypeDef *base) {
     base->CR1 &= ~USART_CR1_TXEIE;
 }
 
+/* DMA */
+void usart_dma_tx_enable(USART_TypeDef *base) {
+    base->CR3 |= USART_CR3_DMAT;
+}
+
+void usart_dma_tx_disable(USART_TypeDef *base) {
+    base->CR3 &= ~USART_CR3_DMAT;
+}
+
+void usart_dma_rx_enable(USART_TypeDef *base) {
+    base->CR3 |= USART_CR3_DMAR;
+}
+
+void usart_dma_rx_disable(USART_TypeDef *base) {
+    base->CR3 &= ~USART_CR3_DMAR;
+}
+
 /* STATUS */
 bool usart_tdr_empty(USART_TypeDef *base) {
     return base->ISR & USART_ISR_TXE;

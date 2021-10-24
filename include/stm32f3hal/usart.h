@@ -47,6 +47,12 @@ void usart_rx_interrupt_disable(USART_TypeDef *base);
 void usart_tx_interrupt_enable(USART_TypeDef *base);
 void usart_tx_interrupt_disable(USART_TypeDef *base);
 
+/* DMA */
+void usart_dma_tx_enable(USART_TypeDef *base);
+void usart_dma_tx_disable(USART_TypeDef *base);
+void usart_dma_rx_enable(USART_TypeDef *base);
+void usart_dma_rx_disable(USART_TypeDef *base);
+
 /* STATUS */
 bool usart_tdr_empty(USART_TypeDef *base);
 bool usart_rdr_not_empty(USART_TypeDef *base);
