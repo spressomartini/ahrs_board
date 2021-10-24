@@ -11,6 +11,7 @@ c_sources = [
     'src/stm32f3hal/rcc.c',
     'src/stm32f3hal/gpio.c',
     'src/stm32f3hal/usart.c',
+    'src/stm32f3hal/dma.c',
     'src/drivers/leds.c',
     'src/drivers/uart.c',
     'src/utils/queue.c',
