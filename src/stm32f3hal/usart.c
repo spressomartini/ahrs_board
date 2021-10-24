@@ -29,7 +29,7 @@ void usart_set_oversampling(USART_TypeDef *base, uint32_t oversamp) {
     uint32_t reg = base->CR1;
 
     // clear bits [15] and set OVER8
-    reg &= USART_CR1_OVER8;
+    reg &= ~USART_CR1_OVER8;
     reg |= oversamp;
 
     // write into CR1
@@ -41,7 +41,7 @@ void usart_set_wordlen(USART_TypeDef *base, uint32_t wordlen) {
     uint32_t reg = base->CR1;
 
     // clear bits [28,12] and set M0, M1
-    reg &= USART_CR1_M0M1;
+    reg &= ~USART_CR1_M0M1;
     reg |= wordlen;
 
     // write into CR1
