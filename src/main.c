@@ -13,23 +13,17 @@ int main(void){
 
     // driver setup
     led_setup();
-    //uart1_setup();
-    uart1_interrupt_setup();
+    uart1_dma_setup();
 
     asm("cpsie i");     /* end interrupt-sensitive init */
     
-    char array[16];
-    int count = 0;
+    //char array[16];
+    //int count = 0;
 
     while (1) {
         led_toggle(GREEN_LED_PIN);
-        count = usart1_interrupt_receive(array);
-
-        if (count != 0) {
-            usart1_interrupt_transmit(array, count);
-        }
-        
-        for(volatile int i = 0; i < 500000; i++);
+        uart1_dma_transmit();
+        for(volatile int i = 0; i < 5000000; i++);
     }
 
     // no touchy
