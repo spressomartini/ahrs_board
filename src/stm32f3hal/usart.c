@@ -131,23 +131,27 @@ void usart_register_irq(USART_TypeDef *base, uint32_t pri) {
 }
 
 void usart_rx_interrupt_enable(USART_TypeDef *base) {
-    // set RXNEIE
     base->CR1 |= USART_CR1_RXNEIE;
 }
 
 void usart_rx_interrupt_disable(USART_TypeDef *base) {
-    // clear RXNEIE
     base->CR1 &= ~USART_CR1_RXNEIE;
 }
 
 void usart_tx_interrupt_enable(USART_TypeDef *base) {
-    // set TXEIE
     base->CR1 |= USART_CR1_TXEIE;
 }
 
 void usart_tx_interrupt_disable(USART_TypeDef *base) {
-    // set TXEIE
     base->CR1 &= ~USART_CR1_TXEIE;
+}
+
+void usart_tc_interrupt_enable(USART_TypeDef *base) {
+    base->CR1 |= USART_CR1_TCIE;
+}
+
+void usart_tc_interrupt_disable(USART_TypeDef *base) {
+    base->CR1 &= ~USART_CR1_TCIE;
 }
 
 /* DMA */
@@ -174,4 +178,9 @@ bool usart_tdr_empty(USART_TypeDef *base) {
 
 bool usart_rdr_not_empty(USART_TypeDef *base) {
     return base->ISR & USART_ISR_RXNE;
+}
+
+/* FLAGS */
+void usart_clearflag_tc(USART_TypeDef *base) {
+    base->ICR |= USART_ICR_TCCF;
 }
