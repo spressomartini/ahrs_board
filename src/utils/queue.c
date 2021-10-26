@@ -75,6 +75,8 @@ size_t queue_skip(queue_t *self, size_t num) {
         self->rd -= self->cap;
     }
 
+    self->size -= num;
+
     return num;
 }
 
