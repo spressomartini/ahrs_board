@@ -55,7 +55,8 @@ typedef struct {
     bool ht_int;
     bool tc_int;
     bool te_int;
-    uint32_t int_pri;
+    uint32_t int_gpri;
+    uint32_t int_spri;
 } DMA_Config;
 
 /* setup */
@@ -70,7 +71,7 @@ void dma_clock_enable(DMA_TypeDef *base);
 void dma_setup(DMA_Config *conf);
 
 /* interrupts */
-void dma_register_irq(IRQn_Type irqn, uint32_t pri);
+void dma_register_irq(IRQn_Type irqn, uint32_t gpri, uint32_t spri);
 void dma_enable_tc_interrupt(DMA_Channel_TypeDef *base);
 void dma_disable_tc_interrupt(DMA_Channel_TypeDef *base);
 void dma_enable_ht_interrupt(DMA_Channel_TypeDef *base);

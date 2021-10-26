@@ -41,7 +41,7 @@ void usart_clock_enable(USART_TypeDef *base);
 void usart_setup(USART_Config *conf);
 
 /* INTERRUPT */
-void usart_register_irq(USART_TypeDef *base, uint32_t pri);
+void usart_register_irq(USART_TypeDef *base, uint32_t gpri, uint32_t spri);
 void usart_rx_interrupt_enable(USART_TypeDef *base);
 void usart_rx_interrupt_disable(USART_TypeDef *base);
 void usart_tx_interrupt_enable(USART_TypeDef *base);

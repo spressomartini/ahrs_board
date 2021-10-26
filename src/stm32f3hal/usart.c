@@ -107,7 +107,9 @@ void usart_setup(USART_Config *conf) {
 }
 
 /* INTERRUPT */
-void usart_register_irq(USART_TypeDef *base, uint32_t pri) {
+void usart_register_irq(USART_TypeDef *base, uint32_t gpri, uint32_t spri) {
+    uint32_t pri;
+
     // select interrupt for USART
     IRQn_Type irqn;
     switch((uint32_t)base) {
@@ -126,6 +128,7 @@ void usart_register_irq(USART_TypeDef *base, uint32_t pri) {
     }
 
     // register the interrupt with the NVIC
+    pri = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), gpri, spri);
     NVIC_SetPriority(irqn, pri);
     NVIC_EnableIRQ(irqn);
 }

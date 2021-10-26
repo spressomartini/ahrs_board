@@ -86,12 +86,14 @@ void dma_setup(DMA_Config *conf) {
 
     // enable interrupts on the NVIC
     if (conf->tc_int || conf->ht_int || conf->te_int) {
-        dma_register_irq(conf->irqn, conf->int_pri);
+        dma_register_irq(conf->irqn, conf->int_gpri, conf->int_spri);
     }
 }
 
 /* INTERRUPTS */
-void dma_register_irq(IRQn_Type irqn, uint32_t pri) {
+void dma_register_irq(IRQn_Type irqn, uint32_t gpri, uint32_t spri) {
+    uint32_t pri = NVIC_EncodePriority(NVIC_GetPriorityGrouping(), gpri, spri);
+
     // register the interrupt with the NVIC
     NVIC_SetPriority(irqn, pri);
     NVIC_EnableIRQ(irqn);
