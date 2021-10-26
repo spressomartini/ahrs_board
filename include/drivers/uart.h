@@ -5,17 +5,31 @@
 #include "drivers/uart.h"
 #include "utils/queue.h"
 
-#define UART1_RX_QUEUE_SIZE     (16u)
-#define UART1_TX_QUEUE_SIZE     (16u)
+#define UART1_TX_QUEUE_SIZE     (512u)
+#define UART1_MAX_TX_SIZE       (32u)
+
+#define UART1_DMA_CHANNEL       (4u)
+
+/* state machine enums */
+typedef enum {
+    IDLE,
+    SEND,
+    BUSY,
+    DONE,
+    ERROR
+} uart_dma_state_t;
+
+typedef enum {
+    NONE,
+    DMA_COMPLETE,
+    UART_FREE,
+    DMA_ERROR
+} uart_dma_input_t;
 
 /* setup */
 void uart1_polling_setup(void);
-void uart1_interrupt_setup(void);
 void uart1_dma_setup(void);
 
 /* dma usage */
-void uart1_dma_transmit();
-
-/* interrupt usage */
-void uart1_interrupt_transmit(char *message, int size);
-int uart1_interrupt_receive(char *buffer);
+uint32_t uart1_queue_transmit(const char *str, size_t len);
+void uart1_dma_fsm(void);

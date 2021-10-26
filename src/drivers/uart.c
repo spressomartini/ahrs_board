@@ -52,14 +52,18 @@ static DMA_Config dma1ch4_config = {
     .ht_int = false,
     .tc_int = true,
     .te_int = true,
-    .int_pri = 1u
+    .int_gpri = 7u,
+    .int_spri = 0u,
 };
 
 /* UART1 QUEUE */
-static queue_t uart1_rx_queue;
 static queue_t uart1_tx_queue;
-static char uart1_rx_buffer[UART1_RX_QUEUE_SIZE];
 static char uart1_tx_buffer[UART1_TX_QUEUE_SIZE];
+
+/* STATE MACHINE GLOBALS */
+static uart_dma_state_t uart1_state = IDLE;
+static volatile uart_dma_input_t uart1_sm_input;
+static size_t uart1_dma_tx_blocksize;
 
 /* SETUP FUNCTIONS */
 void uart1_polling_setup(void) {
@@ -69,24 +73,6 @@ void uart1_polling_setup(void) {
     usart_setup(&usart1_config);
 }
 
-void uart1_interrupt_setup(void) {
-    /* setup uart1 */
-    gpio_pin_setup(&usart1tx_pin_config);
-    gpio_pin_setup(&usart1rx_pin_config);
-    usart_setup(&usart1_config);
-
-    /* setup uart1 software queues */
-    queue_init(&uart1_rx_queue, uart1_rx_buffer, UART1_RX_QUEUE_SIZE);
-    queue_init(&uart1_tx_queue, uart1_tx_buffer, UART1_TX_QUEUE_SIZE);
-
-    // enable rx interrupt on the peripheral
-    usart_rx_interrupt_enable(USART1);
-
-    // enable interrupts at the NVIC
-    // FIXME: CHECK PRIORITY
-    usart_register_irq(USART1, 1);
-}
-
 void uart1_dma_setup(void) {
     /* setup uart1 */
     gpio_pin_setup(&usart1tx_pin_config);
@@ -94,91 +80,111 @@ void uart1_dma_setup(void) {
     usart_setup(&usart1_config);
 
     /* enable tc interrupt on uart1 */
-//    usart_tc_interrupt_enable(USART1);
+    usart_tc_interrupt_enable(USART1);
+    usart_tx_interrupt_disable(USART1);
 
     // enable interrupts at the NVIC
-    // FIXME: PRIORITY
-//    usart_register_irq(USART1, 1);
+    usart_register_irq(USART1, 15u, 0u);
 
     /* enable dma tx on uart1 */
     usart_dma_tx_enable(USART1);
 
     /* setup dma1ch4 */
     dma_setup(&dma1ch4_config);
-}
 
-char teststring[15] = "Hello World!\n\r";
+    /* init queue */
+    queue_init(&uart1_tx_queue, uart1_tx_buffer, UART1_TX_QUEUE_SIZE);
+
+    /* init state machine */
+    uart1_state = IDLE;
+    uart1_sm_input = NONE;
+    uart1_dma_tx_blocksize = 0;
+}
 
 /* DMA USAGE FUNCTIONS */
-void uart1_dma_transmit() {
-    dma_channel_disable(dma1ch4_config.base);
-    dma_set_memory_addr(dma1ch4_config.base, (uint32_t)&teststring);
-    dma_set_transfer_size(dma1ch4_config.base, 14);
-    dma_clearflag_global(DMA1, 4u);
-//   usart_clearflag_tc(USART1);
-    dma_channel_enable(dma1ch4_config.base);
+uint32_t uart1_queue_transmit(const char *str, size_t len) {
+    if (uart1_tx_queue.cap - uart1_tx_queue.size >= len) {
+        for (size_t i = 0; i < len; i++) {
+            queue_push(&uart1_tx_queue, *str++);
+        }
+    }
+    return -1;
 }
 
+/* DMA TX STATE MACHINE */
+void uart1_dma_fsm(void) {
+    uart_dma_state_t next_state = uart1_state;
+    char *block_addr;
+
+    switch(uart1_state) {
+        case IDLE:
+            // only transition if queue is not empty
+            if (uart1_tx_queue.size > 0) {
+                next_state = SEND;
+            }
+        break;
+        case SEND:
+            // prepare the queue
+            uart1_dma_tx_blocksize = queue_block_read_len(&uart1_tx_queue);
+            if (uart1_dma_tx_blocksize > UART1_MAX_TX_SIZE) {
+                uart1_dma_tx_blocksize = UART1_MAX_TX_SIZE;
+            }
+            block_addr = queue_block_read_addr(&uart1_tx_queue);
+
+            // init dma transfer
+            dma_set_transfer_size(dma1ch4_config.base, uart1_dma_tx_blocksize);
+            dma_set_memory_addr(dma1ch4_config.base, (uint32_t)block_addr);
+            dma_clearflag_global(DMA1, UART1_DMA_CHANNEL);
+            dma_channel_enable(dma1ch4_config.base);
+
+            // state transition
+            next_state = BUSY;
+        break;
+        case BUSY:
+            if (uart1_sm_input == DMA_ERROR) {
+                next_state = ERROR;
+            }
+            else if (uart1_sm_input == DMA_COMPLETE || uart1_sm_input == UART_FREE) {
+                next_state = DONE;
+            }
+        break;
+        case DONE:
+            // turn off dma
+            dma_channel_disable(dma1ch4_config.base);
+
+            // update the queue
+            queue_skip(&uart1_tx_queue, uart1_dma_tx_blocksize);
+
+            // state transition
+            if (uart1_sm_input == UART_FREE) {
+                next_state = IDLE;
+            }
+        break;
+        case ERROR:
+            led_off(RED_LED_PIN);
+            led_off(GREEN_LED_PIN);
+        break;
+    }
+    uart1_state = next_state;
+}
+
+/* INTERRUPT HANDLERS */
 void DMA1_Channel4_IRQHandler(void) {
-    led_toggle(RED_LED_PIN);
+    // transfer complete interrupt
     if (DMA1->ISR & DMA_ISR_TCIF4) {
-        dma_clearflag_tc(DMA1, 4u);
-        dma_channel_disable(dma1ch4_config.base);
+        dma_clearflag_tc(DMA1, UART1_DMA_CHANNEL);
+        uart1_sm_input = DMA_COMPLETE;
     }
+    // transfer error interrupt
     else if (DMA1->ISR & DMA_ISR_TEIF4) {
-        led_on(RED_LED_PIN);
+        dma_clearflag_error(DMA1, UART1_DMA_CHANNEL);
+        uart1_sm_input = DMA_ERROR;
     }
 }
 
-/* INTERRUPT USAGE FUNCTIONS */
-void uart1_interrupt_transmit(char *message, int size) {
-    // enqueue the message
-    // FIXME: doesn't check if push successful
-    for (int i = 0; i < size; i++) {
-        queue_push(&uart1_tx_queue, message[i]);
-    }
-    
-    // enable the transmit interrupt
-    usart_tx_interrupt_enable(USART1);
-}
-
-int uart1_interrupt_receive(char *buffer) {
-    int count = 0;
-    char c;
-    while (1) {
-        c = queue_pop(&uart1_rx_queue);
-        if (uart1_rx_queue.op_ok) {
-            *buffer++ = c;
-            count++;
-        }
-        else {
-            break;
-        }
-    }
-    return count;
-}
-
-/* INTERRUPT HANDLER */
 void USART1_IRQHandler(void) {
-    char c;
-
-    led_on(RED_LED_PIN);
-    // recieve data register not empty
-    if (USART1->ISR & USART_ISR_RXNE) {
-        //c = USART1->RDR & 0xFF;
-        //queue_push(&uart1_rx_queue, c);
-    }
-    // transmit data register empty
-    else if (USART1->ISR & USART_ISR_TXE) {
-        //c = queue_pop(&uart1_tx_queue);
-        //if (uart1_tx_queue.op_ok) {
-        //    USART1->TDR = c;
-        //}
-        //// nothing left to send, disable the int
-        //else {
-        //    usart_tx_interrupt_disable(USART1);
-        //}
-    }
-    else if (USART1->ISR & USART_ISR_TC) {
+    if (USART1->ISR & USART_ISR_TC) {
+        usart_clearflag_tc(USART1);
+        uart1_sm_input = UART_FREE;
     }
 }

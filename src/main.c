@@ -4,8 +4,20 @@
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 
+#define TSTRING1_LEN    (28 * 4)
+#define TSTRING2_LEN    (14)
+
+const char teststring1[] = "" 
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r";
+
+const char teststring2[] = "Hello World!\n\r";
+
 int main(void){
-    asm("cpsid i");     /* begin interrupt-sensitive init */ 
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();        /* begin interrupt-sensitive init */
 
     // set up the system and peripheral clocks
     rcc_clock_hse_pll_setup(&rcc_default_config);
@@ -15,15 +27,14 @@ int main(void){
     led_setup();
     uart1_dma_setup();
 
-    asm("cpsie i");     /* end interrupt-sensitive init */
-    
-    //char array[16];
-    //int count = 0;
+    __set_PRIMASK(primask); /* end interrupt-sensitive init */
 
+    uart1_queue_transmit(teststring1, TSTRING1_LEN);
+    
     while (1) {
         led_toggle(GREEN_LED_PIN);
-        uart1_dma_transmit();
-        for(volatile int i = 0; i < 5000000; i++);
+        uart1_dma_fsm();
+        for(volatile int i = 0; i < 500000; i++);
     }
 
     // no touchy
