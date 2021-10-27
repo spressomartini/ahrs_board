@@ -3,6 +3,7 @@
 #include "stm32f3hal/rcc.h"
 #include "drivers/leds.h"
 #include "drivers/uart.h"
+#include "cm4/systick.h"
 
 #define TSTRING1_LEN    (28 * 16)
 #define TSTRING2_LEN    (14)
@@ -38,6 +39,7 @@ int main(void){
     // driver setup
     led_setup();
     uart1_dma_setup();
+    systick_setup(30, 4u, 0u);
 
     __set_PRIMASK(primask); /* end interrupt-sensitive init */
 
@@ -45,15 +47,20 @@ int main(void){
     
     while (1) {
         led_toggle(GREEN_LED_PIN);
-        uart1_dma_fsm();
-        uart1_queue_transmit(teststring2, TSTRING2_LEN);
-        for(volatile int i = 0; i < 500000; i++);
+        uart1_queue_transmit(teststring1, TSTRING1_LEN);
+        for(volatile int i = 0; i < 1000000; i++);
     }
 
     // no touchy
     for(volatile int i = 0;;i++) {
         i;
     }
+}
+
+void SysTick_Handler(void) {
+    // put periodic functions here
+    led_toggle(RED_LED_PIN);
+    uart1_dma_fsm();
 }
 
 void HardFault_Handler(void) {
