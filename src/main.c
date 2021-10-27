@@ -4,10 +4,22 @@
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 
-#define TSTRING1_LEN    (28 * 4)
+#define TSTRING1_LEN    (28 * 16)
 #define TSTRING2_LEN    (14)
 
 const char teststring1[] = "" 
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
 "abcdefghijklmnopqrstuvwxyz\n\r"
 "abcdefghijklmnopqrstuvwxyz\n\r"
 "abcdefghijklmnopqrstuvwxyz\n\r"
@@ -34,6 +46,7 @@ int main(void){
     while (1) {
         led_toggle(GREEN_LED_PIN);
         uart1_dma_fsm();
+        uart1_queue_transmit(teststring2, TSTRING2_LEN);
         for(volatile int i = 0; i < 500000; i++);
     }
 
