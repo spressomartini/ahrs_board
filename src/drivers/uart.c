@@ -105,8 +105,9 @@ void uart1_dma_setup(void) {
 uint32_t uart1_queue_transmit(const char *str, size_t len) {
     if (uart1_tx_queue.cap - uart1_tx_queue.size >= len) {
         for (size_t i = 0; i < len; i++) {
-            queue_push(&uart1_tx_queue, *str++);
+            queue_push(&uart1_tx_queue, str[i]);
         }
+        return 0;
     }
     return -1;
 }
@@ -119,13 +120,12 @@ void uart1_dma_fsm(void) {
     switch(uart1_state) {
         case IDLE:
             // only transition if queue is not empty
-            if (uart1_tx_queue.size > 0) {
+            if ((uart1_dma_tx_blocksize = queue_block_read_len(&uart1_tx_queue)) > 0) {
                 next_state = SEND;
             }
         break;
         case SEND:
             // prepare the queue
-            uart1_dma_tx_blocksize = queue_block_read_len(&uart1_tx_queue);
             if (uart1_dma_tx_blocksize > UART1_MAX_TX_SIZE) {
                 uart1_dma_tx_blocksize = UART1_MAX_TX_SIZE;
             }
@@ -161,8 +161,10 @@ void uart1_dma_fsm(void) {
             }
         break;
         case ERROR:
-            led_off(RED_LED_PIN);
             led_off(GREEN_LED_PIN);
+        break;
+        default:
+            // we should never get here
         break;
     }
     uart1_state = next_state;
