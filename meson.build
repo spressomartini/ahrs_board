@@ -15,6 +15,7 @@ c_sources = [
     'src/drivers/leds.c',
     'src/drivers/uart.c',
     'src/utils/queue.c',
+    'src/cm4/systick.c',
     'src/main.c',
 ]
 
