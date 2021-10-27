@@ -2,6 +2,7 @@
  * queue from PyroAVR, plus a few additional functionality :)
  */
 #include "utils/queue.h"
+#include <stm32f302xc.h>
 
 queue_t *queue_init(queue_t *self, char *buf, size_t size) {
     self->buffer = buf;
@@ -36,11 +37,9 @@ void queue_push(queue_t *self, char val) {
     if(self->size < self->cap) {
         *self->wr = val;
         self->size++;
+        self->wr++;
         if(self->wr == self->buffer + self->cap) {
             self->wr = self->buffer;
-        }
-        else {
-            self->wr++;
         }
         self->op_ok = true;
     }
@@ -67,8 +66,7 @@ size_t queue_skip(queue_t *self, size_t num) {
         return 0;
     }
     
-    num = self->size < num ? self->size : num;
-
+    num = num < self->size ? num : self->size;
     self->rd += num;
     
     if(self->rd - self->buffer >= self->cap) {
@@ -88,11 +86,13 @@ size_t queue_block_read_len(queue_t *self) {
     size_t rd_len;
     char *wr = self->wr, *rd = self->rd, *buf = self->buffer;
 
-    if (wr > rd) {
-        rd_len = wr - rd;
-    }
-    else if (wr < rd) {
-        rd_len = self->cap - (rd - buf);
+    if (self->size > 0) {
+        if (wr > rd) {
+            rd_len = wr - rd;
+        }
+        else {
+            rd_len = self->cap - (rd - buf);
+        }
     }
     else {
         rd_len = 0;
