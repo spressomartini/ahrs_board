@@ -102,7 +102,7 @@ void uart1_dma_setup(void) {
 }
 
 /* DMA USAGE FUNCTIONS */
-uint32_t uart1_queue_transmit(const char *str, size_t len) {
+int32_t uart1_queue_transmit(const char *str, size_t len) {
     if (uart1_tx_queue.cap - uart1_tx_queue.size >= len) {
         for (size_t i = 0; i < len; i++) {
             queue_push(&uart1_tx_queue, str[i]);
