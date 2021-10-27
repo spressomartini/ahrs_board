@@ -1,4 +1,3 @@
-//#include <core_cm4.h>
 #include <stm32f302xc.h>
 #include "stm32f3hal/rcc.h"
 
