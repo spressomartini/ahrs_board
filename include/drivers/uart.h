@@ -31,5 +31,5 @@ void uart1_polling_setup(void);
 void uart1_dma_setup(void);
 
 /* dma usage */
-uint32_t uart1_queue_transmit(const char *str, size_t len);
+int32_t uart1_queue_transmit(const char *str, size_t len);
 void uart1_dma_fsm(void);
