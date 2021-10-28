@@ -3,9 +3,34 @@
 #include "stm32f3hal/rcc.h"
 #include "drivers/leds.h"
 #include "drivers/uart.h"
+#include "cm4/systick.h"
+
+#define TSTRING1_LEN    (28 * 16)
+#define TSTRING2_LEN    (14)
+
+const char teststring1[] = "" 
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r"
+"abcdefghijklmnopqrstuvwxyz\n\r";
+
+const char teststring2[] = "Hello World!\n\r";
 
 int main(void){
-    asm("cpsid i");     /* begin interrupt-sensitive init */ 
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();        /* begin interrupt-sensitive init */
 
     // set up the system and peripheral clocks
     rcc_clock_hse_pll_setup(&rcc_default_config);
@@ -13,29 +38,29 @@ int main(void){
 
     // driver setup
     led_setup();
-    //uart1_setup();
-    uart1_interrupt_setup();
+    uart1_dma_setup();
+    systick_setup(30, 4u, 0u);
 
-    asm("cpsie i");     /* end interrupt-sensitive init */
+    __set_PRIMASK(primask); /* end interrupt-sensitive init */
+
+    uart1_queue_transmit(teststring1, TSTRING1_LEN);
     
-    char array[16];
-    int count = 0;
-
     while (1) {
         led_toggle(GREEN_LED_PIN);
-        count = usart1_interrupt_receive(array);
-
-        if (count != 0) {
-            usart1_interrupt_transmit(array, count);
-        }
-        
-        for(volatile int i = 0; i < 500000; i++);
+        uart1_queue_transmit(teststring1, TSTRING1_LEN);
+        for(volatile int i = 0; i < 1000000; i++);
     }
 
     // no touchy
     for(volatile int i = 0;;i++) {
         i;
     }
+}
+
+void SysTick_Handler(void) {
+    // put periodic functions here
+    led_toggle(RED_LED_PIN);
+    uart1_dma_fsm();
 }
 
 void HardFault_Handler(void) {
