@@ -20,7 +20,7 @@ char queue_pop(queue_t *self) {
         self->op_ok = true;
         self->size--;
         val = *self->rd;
-        if(self->rd - self->buffer == self->cap) {
+        if(self->rd - self->buffer == self->cap - 1) {
             self->rd = self->buffer;
         }
         else {
@@ -33,13 +33,16 @@ char queue_pop(queue_t *self) {
     return val;
 }
 
+
 void queue_push(queue_t *self, char val) {
     if(self->size < self->cap) {
         *self->wr = val;
         self->size++;
-        self->wr++;
-        if(self->wr == self->buffer + self->cap) {
+        if(self->wr == self->buffer + self->cap - 1) {
             self->wr = self->buffer;
+        }
+        else {
+            self->wr++;
         }
         self->op_ok = true;
     }
