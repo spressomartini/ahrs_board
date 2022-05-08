@@ -58,6 +58,7 @@ static DMA_Config dma1ch4_config = {
 
 /* UART1 QUEUE */
 static queue_t uart1_tx_queue;
+// NOTE: uart1_tx_buffer is handled in ld
 extern char uart1_tx_buffer[UART1_TX_QUEUE_SIZE];
 
 /* STATE MACHINE GLOBALS */
