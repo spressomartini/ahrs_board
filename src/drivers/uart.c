@@ -58,7 +58,7 @@ static DMA_Config dma1ch4_config = {
 
 /* UART1 QUEUE */
 static queue_t uart1_tx_queue;
-static char uart1_tx_buffer[UART1_TX_QUEUE_SIZE];
+extern char uart1_tx_buffer[UART1_TX_QUEUE_SIZE];
 
 /* STATE MACHINE GLOBALS */
 static uart_dma_state_t uart1_state = IDLE;
