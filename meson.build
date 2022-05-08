@@ -61,6 +61,7 @@ main = executable(
     'main.elf',
     c_sources,
     include_directories: _incl_dirs,
+    link_args: ['-Wl,-Map=output.map'],
     link_whole: asm_static_object,
     dependencies: dependencies,
     install: true,
