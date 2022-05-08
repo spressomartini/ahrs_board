@@ -5,7 +5,7 @@
 #include "drivers/uart.h"
 #include "utils/queue.h"
 
-#define UART1_TX_QUEUE_SIZE     (512u)
+#define UART1_TX_QUEUE_SIZE     (1024u)
 #define UART1_MAX_TX_SIZE       (32u)
 
 #define UART1_DMA_CHANNEL       (4u)
