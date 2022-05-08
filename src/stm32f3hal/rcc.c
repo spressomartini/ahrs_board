@@ -188,19 +188,27 @@ void rcc_clock_hse_pll_setup(const RCC_CLK_Config *clk_conf) {
 
 /* PERIPHERAL CLOCKING */
 void rcc_i2c_use_sysclk(I2C_TypeDef *base) {
-    if(base == I2C1) {
-        RCC->CFGR3 |= RCC_CFGR3_I2C1SW;
-    }
-    if(base == I2C2) {
-        RCC->CFGR3 |= RCC_CFGR3_I2C2SW;
+    switch((uint32_t)base) {
+        case (uint32_t)I2C1:
+            RCC->CFGR3 |= RCC_CFGR3_I2C1SW;
+            break;
+        case (uint32_t)I2C2:
+            RCC->CFGR3 |= RCC_CFGR3_I2C2SW;
+            break;
+        default:
+            break;
     }
 }
 
 void rcc_i2c_use_hsi(I2C_TypeDef *base) {
-    if(base == I2C1) {
-        RCC->CFGR3 &= ~RCC_CFGR3_I2C1SW;
-    }
-    if(base == I2C2) {
-        RCC->CFGR3 &= ~RCC_CFGR3_I2C2SW;
+    switch((uint32_t)base) {
+        case (uint32_t)I2C1:
+            RCC->CFGR3 &= ~RCC_CFGR3_I2C1SW;
+            break;
+        case (uint32_t)I2C2:
+            RCC->CFGR3 &= ~RCC_CFGR3_I2C2SW;
+            break;
+        default:
+            break;
     }
 }
