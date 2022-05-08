@@ -165,6 +165,17 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
+  /* DMA queue section, to store the character buffer for the UART queue */
+  ._uart1_char_buf :
+  {
+	. = ALIGN(4);
+	_suart1_buf = .;
+	uart1_tx_buffer = .;
+	. += 1024;  /* TODO maybe make the CPP set this one based off of the define... */
+	. = ALIGN(4);
+	_euart1_buf = .;
+  } >RAM
+
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {
