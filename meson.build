@@ -15,6 +15,7 @@ c_sources = [
     'src/stm32f3hal/dma.c',
     'src/drivers/leds.c',
     'src/drivers/uart.c',
+    'src/devices/bmx055.c',
     'src/utils/queue.c',
     'src/cm4/systick.c',
     'src/main.c',
