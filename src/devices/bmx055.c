@@ -1,4 +1,4 @@
-#include "devices/bmx055.c"
+#include "devices/bmx055.h"
 #include "stm32f3hal/gpio.h"
 
 static GPIO_PIN_Config bmx055_pow_config = {
@@ -15,10 +15,10 @@ void bmx055_pow_setup(void) {
 }
 
 void bmx055_on() {
-    gpio_Write_pin(GPIOA, BMX055_POW_PIN, GPIO_PIN_RESET);
+    gpio_write_pin(GPIOA, BMX055_POW_PIN, GPIO_PIN_RESET);
 }
 
 void bmx055_off() {
-    gpio_Write_pin(GPIOA, BMX055_POW_PIN, GPIO_PIN_SET);
+    gpio_write_pin(GPIOA, BMX055_POW_PIN, GPIO_PIN_SET);
 }
 

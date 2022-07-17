@@ -2,6 +2,15 @@
 #include "stm32f3hal/rcc.h"
 #include <stm32f302xc.h>
 
+typedef struct {
+    I2C_TypeDef *base;
+    uint8_t prescaler;
+    uint8_t sclh;
+    uint8_t scll;
+    uint8_t setup_time;  // scldel
+    uint8_t hold_time;   // sdadel
+} I2C_Config;
+
 
 void i2c_clock_enable(I2C_TypeDef *base);
 

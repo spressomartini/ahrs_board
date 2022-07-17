@@ -3,15 +3,6 @@
 #include "stm32f3hal/rcc.h"
 #include "stm32f3hal/i2c.h"
 
-typedef struct {
-    I2C_TypeDef *base;
-    uint8_t prescaler;
-    uint8_t sclh;
-    uint8_t scll;
-    uint8_t setup_time;  // scldel
-    uint8_t hold_time;   // sdadel
-} I2C_Config;
-
 const I2C_Config i2c_100khz_config = {
     .base = I2C1,
     .prescaler = 0x0Fu,
