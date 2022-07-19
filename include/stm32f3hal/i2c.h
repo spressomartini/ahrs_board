@@ -11,6 +11,8 @@ typedef struct {
     uint8_t hold_time;   // sdadel
 } I2C_Config;
 
+extern I2C_Config i2c_100khz_config;
+extern I2C_Config i2c_400khz_config;
 
 void i2c_clock_enable(I2C_TypeDef *base);
 

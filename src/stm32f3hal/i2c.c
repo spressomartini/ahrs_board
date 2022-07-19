@@ -3,7 +3,7 @@
 #include "stm32f3hal/rcc.h"
 #include "stm32f3hal/i2c.h"
 
-const I2C_Config i2c_100khz_config = {
+I2C_Config i2c_100khz_config = {
     .base = I2C1,
     .prescaler = 0x0Fu,
     .sclh = 0x0Fu,
@@ -12,7 +12,7 @@ const I2C_Config i2c_100khz_config = {
     .hold_time = 0x02u
 };
 
-const I2C_Config i2c_400khz_config = {
+I2C_Config i2c_400khz_config = {
     .base = I2C1,
     .prescaler = 0x07u,
     .sclh = 0x03u,
