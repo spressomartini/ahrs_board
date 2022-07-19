@@ -17,6 +17,7 @@ c_sources = [
     'src/drivers/uart.c',
     'src/devices/bmx055.c',
     'src/utils/queue.c',
+    'src/utils/bin2hex.c',
     'src/cm4/systick.c',
     'src/main.c',
 ]
