@@ -48,16 +48,16 @@ void bmx055_off(void) {
 }
 
 void bmx055_read_accel_whoami(uint8_t *buf) {
-    uint8_t reg[] = {BMX055_ACCEL_BGW_CHIPID_ADDR};
+    uint8_t reg[] = {BMX055_ACCEL_CHIPID_ADDR};
     i2c_master_transfer7(I2C1, BMX055_ACCEL_I2C_ADDR, reg, 1, buf, 1);
 }
 
 void bmx055_read_gyro_whoami(uint8_t *buf) {
-    uint8_t reg[] = {BMX055_GYRO_BGW_CHIPID_ADDR};
+    uint8_t reg[] = {BMX055_GYRO_CHIPID_ADDR};
     i2c_master_transfer7(I2C1, BMX055_GYRO_I2C_ADDR, reg, 1, buf, 1);
 }
 
 void bmx055_read_magnet_whoami(uint8_t *buf) {
-    uint8_t reg[] = {BMX055_MAGNET_BGW_CHIPID_ADDR};
+    uint8_t reg[] = {BMX055_MAGNET_CHIPID_ADDR};
     i2c_master_transfer7(I2C1, BMX055_MAGNET_I2C_ADDR, reg, 1, buf, 1);
 }
