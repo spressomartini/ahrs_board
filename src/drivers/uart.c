@@ -5,27 +5,7 @@
 #include "utils/queue.h"
 #include "drivers/uart.h"
 #include "drivers/leds.h"
-
-/* UART1 CONFIGS */
-static GPIO_PIN_Config usart1tx_pin_config = {
-    .base = GPIOA,
-    .pin = 9,
-    .mode = GPIO_MODER_ALT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_HIGH,
-    .alt = 7,
-};
-
-static GPIO_PIN_Config usart1rx_pin_config = {
-    .base = GPIOA,
-    .pin = 10,
-    .mode = GPIO_MODER_ALT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_HIGH,
-    .alt = 7,
-};
+#include "devices/ahrs_ioconfig.h"
 
 static USART_Config usart1_config = {
     .base = USART1,
