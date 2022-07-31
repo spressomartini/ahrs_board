@@ -1,35 +1,6 @@
-#include "devices/bmx055.h"
-#include "stm32f3hal/gpio.h"
 #include "stm32f3hal/i2c.h"
-
-static GPIO_PIN_Config bmx055_pow_config = {
-    .base = GPIOA,
-    .pin = BMX055_POW_PIN,
-    .mode = GPIO_MODER_OUTPUT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_LOW,
-};
-
-static GPIO_PIN_Config i2c1_scl_pin_config = {
-    .base = GPIOB,
-    .pin = 6,
-    .mode = GPIO_MODER_ALT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_HIGH,
-    .alt = 4,
-};
-
-static GPIO_PIN_Config i2c1_sda_pin_config = {
-    .base = GPIOB,
-    .pin = 7,
-    .mode = GPIO_MODER_ALT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_HIGH,
-    .alt = 4,
-};
+#include "devices/bmx055.h"
+#include "devices/ahrs_ioconfig.h"
 
 void bmx055_setup(void) {
     gpio_pin_setup(&bmx055_pow_config);

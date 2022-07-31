@@ -1,25 +1,6 @@
 #include "stm32f3hal/gpio.h"
 #include "drivers/leds.h"
-
-// GREEN LED CONFIG
-static GPIO_PIN_Config green_led_config = {
-    .base = GPIOB,
-    .pin = GREEN_LED_PIN,
-    .mode = GPIO_MODER_OUTPUT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_LOW,
-};
-
-// RED LED CONFIG
-static GPIO_PIN_Config red_led_config = {
-    .base = GPIOB,
-    .pin = RED_LED_PIN,
-    .mode = GPIO_MODER_OUTPUT,
-    .pull = GPIO_PUPDR_NOPULL,
-    .otype = GPIO_OTYPER_PUSHPULL,
-    .ospeed = GPIO_OSPEEDR_LOW,
-};
+#include "devices/ahrs_ioconfig.h"
 
 void led_setup(void) {
     gpio_pin_setup(&green_led_config);
