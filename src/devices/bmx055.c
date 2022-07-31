@@ -26,9 +26,9 @@ void bmx055_read_accel_whoami(uint8_t *buf) {
     i2c_master_transfer7(I2C1, BMX055_ACCEL_I2C_ADDR, reg, 1, buf, 1);
 }
 
-void bmx055_accel_burst_read(uint8_t *accel_data) {
+void bmx055_accel_burst_read_data(BMX055_AccelData_t *buf) {
     uint8_t reg[] = {BMX055_ACCEL_ACCD_X_LSB_ADDR};
-    i2c_master_transfer7(I2C1, BMX055_ACCEL_I2C_ADDR, reg, 1, (uint8_t *)accel_data, 7);
+    i2c_master_transfer7(I2C1, BMX055_ACCEL_I2C_ADDR, reg, 1, buf->array, 7);
 }
 
 void bmx055_read_gyro_whoami(uint8_t *buf) {

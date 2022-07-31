@@ -150,8 +150,31 @@ typedef union {
 void bmx055_setup(void);
 void bmx055_on(void);
 void bmx055_off(void);
-void bmx055_read_accel_whoami(uint8_t *buf);
-void bmx055_accel_burst_read(uint8_t *accel_data);
 
+/**
+ * Reads the ID register from the accelerometer in the BMX055.
+ *
+ * @param buf Pointer to a one byte buffer.
+ */
+void bmx055_read_accel_whoami(uint8_t *buf);
+
+/**
+ * Reads all the data from the accelerometer in the BMX055.
+ *
+ * @param buf Pointer to the seven byte BMX055_AccelData_t union.
+ */
+void bmx055_accel_burst_read_data(BMX055_AccelData_t *buf);
+
+/**
+ * Reads the ID register from the gyroscope in the BMX055.
+ *
+ * @param buf Pointer to a one byte buffer.
+ */
 void bmx055_read_gyro_whoami(uint8_t *buf);
+
+/**
+ * Reads the ID register from the magnetometer in the BMX055.
+ *
+ * @param buf Pointer to a one byte buffer.
+ */
 void bmx055_read_magnet_whoami(uint8_t *buf);

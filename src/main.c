@@ -8,12 +8,10 @@
 #include "cm4/systick.h"
 
 #define TSTRING1_LEN    (28 * 16)
-#define TSTRING2_LEN    (14)
 
 const char teststring1[] = ""
 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\r";
 
-const char teststring2[] = "Hello World!\n\r";
 const char newline[] = "\n\r";
 
 int main(void){
@@ -65,7 +63,7 @@ int main(void){
     uart1_queue_transmit(newline, 2);
 
     while (1) {
-        bmx055_accel_burst_read(accel_data.array);
+        bmx055_accel_burst_read_data(&accel_data);
         for(volatile int i = 0; i < 1000000; i++);
     }
 
