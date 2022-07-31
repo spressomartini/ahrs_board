@@ -1,7 +1,6 @@
 #pragma once
-#include <stm32f302xc.h>
+#include <stdint.h>
 
-#define BMX055_POW_PIN  (5u)
 #define BMX055_ACCEL_I2C_ADDR       (0x18u)
 #define BMX055_GYRO_I2C_ADDR        (0x68u)
 #define BMX055_MAGNET_I2C_ADDR      (0x10u)
