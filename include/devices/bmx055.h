@@ -138,9 +138,21 @@ typedef enum {
     BMX055_MAGNET_52_ADDR,
 } BMX055MagnetReg;
 
+typedef union {
+    uint8_t array[7];
+    struct {
+        uint16_t x;
+        uint16_t y;
+        uint16_t z;
+        uint8_t temp;
+    } data;
+} BMX055_AccelData_t;
+
 void bmx055_setup(void);
 void bmx055_on(void);
 void bmx055_off(void);
 void bmx055_read_accel_whoami(uint8_t *buf);
+void bmx055_accel_burst_read(uint8_t *accel_data);
+
 void bmx055_read_gyro_whoami(uint8_t *buf);
 void bmx055_read_magnet_whoami(uint8_t *buf);

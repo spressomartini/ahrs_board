@@ -40,29 +40,32 @@ int main(void){
     uint8_t whoami;
     uint16_t hex;
     char whoami_str[4] = "0x??";
+    BMX055_AccelData_t accel_data;
+
+    led_toggle(GREEN_LED_PIN);
+    bmx055_read_accel_whoami(&whoami);
+    hex = bin2hex(whoami);
+    whoami_str[2] = (hex >> 8) & 0xFFu;
+    whoami_str[3] = (hex & 0xFFu);
+    uart1_queue_transmit(whoami_str, 4);
+    uart1_queue_transmit(newline, 2);
+
+    bmx055_read_gyro_whoami(&whoami);
+    hex = bin2hex(whoami);
+    whoami_str[2] = (hex >> 8) & 0xFFu;
+    whoami_str[3] = (hex & 0xFFu);
+    uart1_queue_transmit(whoami_str, 4);
+    uart1_queue_transmit(newline, 2);
+
+    bmx055_read_magnet_whoami(&whoami);
+    hex = bin2hex(whoami);
+    whoami_str[2] = (hex >> 8) & 0xFFu;
+    whoami_str[3] = (hex & 0xFFu);
+    uart1_queue_transmit(whoami_str, 4);
+    uart1_queue_transmit(newline, 2);
+
     while (1) {
-        led_toggle(GREEN_LED_PIN);
-        bmx055_read_accel_whoami(&whoami);
-        hex = bin2hex(whoami);
-        whoami_str[2] = (hex >> 8) & 0xFFu;
-        whoami_str[3] = (hex & 0xFFu);
-        uart1_queue_transmit(whoami_str, 4);
-        uart1_queue_transmit(newline, 2);
-        
-        bmx055_read_gyro_whoami(&whoami);
-        hex = bin2hex(whoami);
-        whoami_str[2] = (hex >> 8) & 0xFFu;
-        whoami_str[3] = (hex & 0xFFu);
-        uart1_queue_transmit(whoami_str, 4);
-        uart1_queue_transmit(newline, 2);
-
-        bmx055_read_magnet_whoami(&whoami);
-        hex = bin2hex(whoami);
-        whoami_str[2] = (hex >> 8) & 0xFFu;
-        whoami_str[3] = (hex & 0xFFu);
-        uart1_queue_transmit(whoami_str, 4);
-        uart1_queue_transmit(newline, 2);
-
+        bmx055_accel_burst_read(accel_data.array);
         for(volatile int i = 0; i < 1000000; i++);
     }
 
