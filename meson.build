@@ -7,19 +7,27 @@ local_headers = ['include']
 
 # List of C sources to compile. Relative to project root.
 c_sources = [
+# hal drivers
     'src/stm32f3hal/flash.c',
     'src/stm32f3hal/rcc.c',
     'src/stm32f3hal/gpio.c',
     'src/stm32f3hal/usart.c',
     'src/stm32f3hal/i2c.c',
     'src/stm32f3hal/dma.c',
+# board drivers
     'src/drivers/leds.c',
     'src/drivers/uart.c',
+# board devices
     'src/devices/bmx055.c',
     'src/devices/ahrs_ioconfig.c',
+# utilities
     'src/utils/queue.c',
     'src/utils/bin2hex.c',
+# algorithms
+    'src/algos/quaternion.c',
+# core m4 drivers
     'src/cm4/systick.c',
+# programs
     'src/main.c',
 ]
 
