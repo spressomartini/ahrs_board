@@ -5,6 +5,7 @@
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 #include "devices/bmx055.h"
+#include "devices/ahrs_ioconfig.h"
 #include "cm4/systick.h"
 
 #define TSTRING1_LEN    (28 * 16)
