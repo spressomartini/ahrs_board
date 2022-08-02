@@ -148,7 +148,7 @@ typedef union {
         uint16_t y;
         uint16_t z;
         uint8_t temp;
-    } data;
+    };
 } BMX055_AccelData_t;
 
 typedef union {
@@ -157,7 +157,7 @@ typedef union {
         uint16_t x;
         uint16_t y;
         uint16_t z;
-    } data;
+    };
 } BMX055_GyroData_t;
 
 typedef union {

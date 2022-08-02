@@ -6,6 +6,7 @@
 #include "drivers/uart.h"
 #include "devices/bmx055.h"
 #include "devices/ahrs_ioconfig.h"
+#include "algos/quaternion.h"
 #include "cm4/systick.h"
 
 #define TSTRING1_LEN    (28 * 16)
@@ -42,6 +43,10 @@ int main(void){
     BMX055_AccelData_t accel_data;
     BMX055_GyroData_t gyro_data;
     BMX055_MagnetData_t magnet_data;
+    quaternion q_accel, q_gyro;
+    quaternion q_dqdt;
+    quaternion q_attitude = {1, 0, 0, 0};
+    euler_angle eu_debug;
 
     led_toggle(GREEN_LED_PIN);
     bmx055_read_accel_whoami(&whoami);
@@ -69,6 +74,15 @@ int main(void){
         bmx055_accel_burst_read_data(&accel_data);
         bmx055_gyro_burst_read_data(&gyro_data);
         bmx055_magnet_burst_read_data(&magnet_data);
+
+        q_accel.a = 0, q_accel.b = accel_data.x, q_accel.c = accel_data.y, q_accel.d = accel_data.z;
+        q_accel = q_normalize(&q_accel);
+
+        q_gyro.a = 0, q_gyro.b = gyro_data.x, q_gyro.c = gyro_data.y, q_gyro.d = gyro_data.z;
+        q_dqdt = q_scalar_mult(&q_gyro, 0.5f);
+        q_attitude = q_mult(&q_attitude, &q_dqdt);
+//        eu_debug = q_toeuler(&q_attitude);
+
         for(volatile int i = 0; i < 1000000; i++);
     }
 
