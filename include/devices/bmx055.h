@@ -5,6 +5,10 @@
 #define BMX055_GYRO_I2C_ADDR        (0x68u)
 #define BMX055_MAGNET_I2C_ADDR      (0x10u)
 
+#define BMX055_ACCEL_DATA_SIZE      (7u)
+#define BMX055_GYRO_DATA_SIZE       (6u)
+#define BMX055_MAGNET_DATA_SIZE     (8u)
+
 // ACCEL REGISTER ADDRESSES
 typedef enum {
     BMX055_ACCEL_CHIPID_ADDR = 0x00,
@@ -138,7 +142,7 @@ typedef enum {
 } BMX055MagnetReg;
 
 typedef union {
-    uint8_t array[7];
+    uint8_t array[BMX055_ACCEL_DATA_SIZE];
     struct {
         uint16_t x;
         uint16_t y;
@@ -147,10 +151,32 @@ typedef union {
     } data;
 } BMX055_AccelData_t;
 
+typedef union {
+    uint8_t array[BMX055_GYRO_DATA_SIZE];
+    struct {
+        uint16_t x;
+        uint16_t y;
+        uint16_t z;
+    } data;
+} BMX055_GyroData_t;
+
+typedef union {
+    uint8_t array[BMX055_MAGNET_DATA_SIZE];
+    struct {
+        uint16_t x;
+        uint16_t y;
+        uint16_t z;
+        uint16_t rhall;
+    };
+} BMX055_MagnetData_t;
+
 void bmx055_setup(void);
 void bmx055_on(void);
 void bmx055_off(void);
 
+/* =======================
+ * ACCELEROMETER FUNCTIONS
+ * =======================*/
 /**
  * Reads the ID register from the accelerometer in the BMX055.
  *
@@ -165,6 +191,9 @@ void bmx055_read_accel_whoami(uint8_t *buf);
  */
 void bmx055_accel_burst_read_data(BMX055_AccelData_t *buf);
 
+/* ===================
+ * GYROSCOPE FUNCTIONS
+ * ===================*/
 /**
  * Reads the ID register from the gyroscope in the BMX055.
  *
@@ -173,8 +202,25 @@ void bmx055_accel_burst_read_data(BMX055_AccelData_t *buf);
 void bmx055_read_gyro_whoami(uint8_t *buf);
 
 /**
+ * Reads all the data from the gyroscope in the BMX055.
+ *
+ * @param buf Pointer to a six byte buffer.
+ */
+void bmx055_gyro_burst_read_data(BMX055_GyroData_t *buf);
+
+/* ======================
+ * MAGNETOMETER FUNCTIONS
+ * ======================*/
+/**
  * Reads the ID register from the magnetometer in the BMX055.
  *
  * @param buf Pointer to a one byte buffer.
  */
 void bmx055_read_magnet_whoami(uint8_t *buf);
+
+/**
+ * Reads all the data from the magnetometer in the BMX055.
+ *
+ * @param buf Pointer to an eight byte buffer.
+ */
+void bmx055_magnet_burst_read_data(BMX055_MagnetData_t *buf);

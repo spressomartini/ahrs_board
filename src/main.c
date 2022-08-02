@@ -40,6 +40,8 @@ int main(void){
     uint16_t hex;
     char whoami_str[4] = "0x??";
     BMX055_AccelData_t accel_data;
+    BMX055_GyroData_t gyro_data;
+    BMX055_MagnetData_t magnet_data;
 
     led_toggle(GREEN_LED_PIN);
     bmx055_read_accel_whoami(&whoami);
@@ -65,6 +67,8 @@ int main(void){
 
     while (1) {
         bmx055_accel_burst_read_data(&accel_data);
+        bmx055_gyro_burst_read_data(&gyro_data);
+        bmx055_magnet_burst_read_data(&magnet_data);
         for(volatile int i = 0; i < 1000000; i++);
     }
 
