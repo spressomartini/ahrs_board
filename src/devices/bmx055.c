@@ -55,10 +55,13 @@ void bmx055_read_magnet_whoami(uint8_t *buf) {
     i2c_master_transfer7(I2C1, BMX055_MAGNET_I2C_ADDR, reg, 1, buf, 1);
 }
 
-void bmx055_magnet_burst_read_data(BMX055_MagnetData_t *buf) {
+void bmx055_magnet_setup() {
     uint8_t config[] = {BMX055_MAGNET_4C_ADDR, 0b00111000u};
-    uint8_t reg[] = {BMX055_MAGNET_DATA_X_LSB_ADDR};
     i2c_master_transfer7(I2C1, BMX055_MAGNET_I2C_ADDR, config, 2, 0, 0);
     for (volatile int i = 0; i < 5000; i++);
+}
+
+void bmx055_magnet_burst_read_data(BMX055_MagnetData_t *buf) {
+    uint8_t reg[] = {BMX055_MAGNET_DATA_X_LSB_ADDR};
     i2c_master_transfer7(I2C1, BMX055_MAGNET_I2C_ADDR, reg, 1, buf->array, BMX055_MAGNET_DATA_SIZE);
 }

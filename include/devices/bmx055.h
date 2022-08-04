@@ -219,6 +219,11 @@ void bmx055_gyro_burst_read_data(BMX055_GyroData_t *buf);
 void bmx055_read_magnet_whoami(uint8_t *buf);
 
 /**
+ * Setup the magnetometer for data reads.
+ */
+void bmx055_magnet_setup();
+
+/**
  * Reads all the data from the magnetometer in the BMX055.
  *
  * @param buf Pointer to an eight byte buffer.
