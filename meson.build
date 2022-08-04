@@ -25,6 +25,7 @@ c_sources = [
     'src/utils/bin2hex.c',
 # algorithms
     'src/algos/quaternion.c',
+    'src/algos/madgwick.c',
 # core m4 drivers
     'src/cm4/systick.c',
 # programs
