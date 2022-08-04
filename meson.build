@@ -23,6 +23,7 @@ c_sources = [
 # utilities
     'src/utils/queue.c',
     'src/utils/bin2hex.c',
+    'src/utils/aproto.c',
 # algorithms
     'src/algos/quaternion.c',
     'src/algos/madgwick.c',

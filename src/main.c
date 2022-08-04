@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "stm32f3hal/rcc.h"
 #include "utils/bin2hex.h"
+#include "utils/aproto.h"
 #include "drivers/leds.h"
 #include "drivers/uart.h"
 #include "devices/bmx055.h"
@@ -21,7 +22,6 @@ BMX055_AccelData_t accel_data;
 BMX055_GyroData_t gyro_data;
 BMX055_MagnetData_t magnet_data;
 bool fresh_data = false;
-euler_angle history[512] = {0};
 
 int main(void){
     uint32_t primask = __get_PRIMASK();
@@ -48,7 +48,7 @@ int main(void){
     uint16_t hex;
     char whoami_str[4] = "0x??";
     euler_angle eu_debug;
-    uint16_t idx = 0;
+    aproto_t aproto_packet;
 
     led_toggle(GREEN_LED_PIN);
     bmx055_read_accel_whoami(&whoami);
@@ -78,11 +78,10 @@ int main(void){
         if (fresh_data) {
             imu_filter(accel_data.x, accel_data.y, accel_data.z, gyro_data.x, gyro_data.y, gyro_data.z);
             eu_debug = q_toeuler(&q_est);
-            if (idx < 512) {
-                history[idx] = eu_debug;
-                idx++;
-            }
-
+            pack_aproto(&aproto_packet, accel_data.x, accel_data.y, accel_data.z, gyro_data.x, gyro_data.y, gyro_data.z,
+                        magnet_data.x, magnet_data.y, magnet_data.z, q_est.a, q_est.b, q_est.c, q_est.d,
+                        eu_debug.roll, eu_debug.pitch, eu_debug.yaw);
+            uart1_queue_transmit((char *)&aproto_packet, APROTO_PACKET_SIZE);
             fresh_data = false;
         }
         //for(volatile int i = 0; i < 1000000; i++);
