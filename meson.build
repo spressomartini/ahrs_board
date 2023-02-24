@@ -24,6 +24,7 @@ c_sources = [
     'src/utils/queue.c',
     'src/utils/bin2hex.c',
     'src/utils/aproto.c',
+    'src/utils/mpack.c',
 # algorithms
     'src/algos/quaternion.c',
     'src/algos/madgwick.c',
@@ -37,6 +38,14 @@ c_sources = [
 asm_sources = [
   #    'src/draw_isr.S'
 ]
+
+# mpack configuration, probably move this into options
+add_project_arguments('-DMPACK_STDLIB=0', language: 'c')
+add_project_arguments('-DMPACK_STDIO=0', language: 'c')
+add_project_arguments('-DMPACK_READER=0', language: 'c')
+add_project_arguments('-DMPACK_EXPECT=0', language: 'c')
+add_project_arguments('-DMPACK_NODE=0', language: 'c')
+add_project_arguments('-DMPACK_BUILDER=0', language: 'c')
 
 # add this back in if you like funrolling
 # add_project_arguments('-funroll-loops', language: 'c')
